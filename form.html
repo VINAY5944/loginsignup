@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+    login signup
+</title>
+<link href="style.css"  rel="stylesheet"  >
+</head>
+
+<body>
+<div class="main">
+<div class="formbox">
+<div class="buttonbox">
+<div id="btn"></div>
+    <button class="thebutton" onclick="login()" >login</button>
+    <button class="thebutton"  onclick="signup()" >signup</button>
+</div>
+<div   class="loginmaindiv"  >
+    <form  class="inputform"  id="login"  onsubmit="handlelogin(event)" > 
+        <input type="email" class="fieldinp"   id="loginemail"  placeholder="email" required  />
+        <input type="password" class="fieldinp"  id="loginpassword" placeholder="password"  required />
+        <button type="submit"  class="btnsubmit" >login</button>
+    </form>
+
+    <div   class="signupmaindiv"  >
+        <form   class="inputform"   id="signup" onsubmit="handlesignup(event)"  > 
+            <input type="text"   class="fieldinp" id="signupname" placeholder="name" required  />
+            <input type="email" class="fieldinp" id="signupemail"  placeholder="email" required  />
+            <input type="password" class="fieldinp" id="signuppassword"  placeholder="password" required  />
+            <input type="password"class="fieldinp" id="signupconfirmpassword"  placeholder="confirm password" required  />
+            <button class="btnsubmitsignup"  type="submit" >signup</button>
+        </form>
+        </div>
+
+     </div>
+</div>
+</div>
+</div>
+
+
+
+<div class="container">
+<div class="popup"  id="popup" >
+<img src="green.png"  id="popupimg" >
+<h2  id="popupcontent"  >content</h2>
+<p id="popup"  >click button to close </p>
+<button type="button"  onclick="closepopup(event)"  class="popupbutton" >ok</button>
+</div>
+</div>
+
+
+
+</body>
+
+
+<script>
+var a=document.getElementById('login');
+var b=document.getElementById('signup');
+var c=document.getElementById('btn');
+//login
+var d=document.getElementById('loginemail').value;
+var e=document.getElementById('loginpassword').value;
+///signup
+
+var f=document.getElementById('signupname').value;
+var g=document.getElementById('signupemail').value;
+var h=document.getElementById('signuppassword').value;
+var i=document.getElementById('signupconfirmpassword').value
+
+///popup
+var popup=document.getElementById('popup')
+const popupImg = document.getElementById('popupimg');
+const popupTitle = document.querySelector('#popup h2');
+const popupContent = document.querySelector('#popup p');
+
+function openPopup(imgSrc, title, content) {
+    popupImg.src = imgSrc;
+    popupTitle.textContent = title;
+    popupContent.textContent = content;
+    popup.classList.add('openpopup');
+}
+
+
+
+
+
+function  login(){
+a.style.left="50px"
+b.style.left="450px"
+c.style.left="0"
+}
+
+function signup(){
+a.style.left="-700px"
+b.style.left="50px"
+c.style.left="50%"
+}
+
+
+const handlesignup = async (event) => {
+    event.preventDefault()
+    const newPassword = document.getElementById('signuppassword').value;
+    const newConfirmPassword = document.getElementById('signupconfirmpassword').value;
+
+    if (newPassword === newConfirmPassword) {
+        openPopup('green.png', 'Signup Successful', 'You have successfully signed up.');
+
+    
+        const existingDetailsJSON = localStorage.getItem('signupuser');
+        let existingDetails = existingDetailsJSON ? JSON.parse(existingDetailsJSON) : [];
+
+     
+        const newDetail = {
+            name: document.getElementById('signupname').value,
+            email: document.getElementById('signupemail').value,
+            password: newPassword,
+        };
+
+        existingDetails.push(newDetail);
+
+        try {
+            
+            await localStorage.setItem('signupuser', JSON.stringify(existingDetails));
+        } catch (error) {
+            console.log(error);
+        }
+    } else {
+        openPopup('redcross.jpeg', 'Signup Failed', 'Passwords do not match.');
+    }
+};
+
+const handlelogin = async (event) => {
+ event.preventDefault()
+
+    const existingDetailsJSON = await localStorage.getItem('signupuser');
+    let existingDetails = existingDetailsJSON ? JSON.parse(existingDetailsJSON) : [];
+
+    const loginemail = document.getElementById("loginemail").value;
+    const loginpassword = document.getElementById('loginpassword').value;
+
+    console.log("Existing Details:", existingDetails);
+
+    const tologinuser = existingDetails.find(user => user.email === loginemail);
+
+
+
+    console.log("User to Login:", tologinuser);
+
+    if (tologinuser && tologinuser.password === loginpassword) {
+      
+
+
+openPopup('green.png', 'Login Successful', 'You have successfully logged in.');
+
+    } else {
+      
+
+ openPopup('redcross.jpeg', 'Login Failed', 'Invalid email or password.')
+    }
+};
+
+
+
+const  closepopup=(event)=>{
+event.preventDefault()
+
+ popup.classList.remove('openpopup')
+
+}
+</script>
